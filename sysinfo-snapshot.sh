@@ -46,7 +46,6 @@ declare -a NativeCommands=(\
 	'lslk'\
 	'lsmod'\
 	'rpm -qa'\
-	'lsof'\
 	'modprobe sg'\
 	'numactl --hardware'\
 	'lspci'\
@@ -58,8 +57,19 @@ declare -a NativeCommands=(\
 	'service irqbalance status'\
 	'env'\
 	'dmidecode'\
+	'dpkg -l'\
+	'ls -la /etc/init.d/'\
+	'ls -la /etc/rc1.d/'\
+	'ls -la /etc/rc2.d/'\
+	'ls -la /etc/rc3.d/'\
+	'ls -la /etc/rc4.d/'\
+	'ls -la /etc/rc5.d/'\
+	'ls -la /home/'
+
+
+)	
+	#'lsof'\
 	#'ps xfalw'\
-)
 
 declare -a SensitiveCommands=(\
 	'iptables -t filter -nvL'\
@@ -96,6 +106,7 @@ declare -a DriverCommands=(
 
 declare -a FilesToGet=(
 	'/boot/grub/grub.conf'
+	'/boot/grub/grub.cfg'
 	'/proc/version'\
 	'/proc/modules'\
 	'/proc/cpuinfo'\
@@ -129,8 +140,10 @@ declare -a FilesToGet=(
 	'/proc/scsi/scsi'\
 	'/etc/resolv.conf'\
 	'/etc/hosts'\
+	'/etc/hostname'\
 	'/etc/hosts.allow'\
 	'/etc/hosts.deny'\
+	'/etc/network/interfaces'\
 	'/sys/class/infiniband/*/board_id'\
 	'/sys/class/infiniband/*/fw_ver'\
 	'/sys/class/infiniband/*/hca_type'\
@@ -144,7 +157,7 @@ declare -a FilesToGet=(
 	'/proc/net/dev_mcast'\
 	'/etc/modprobe.conf'\
 	'/etc/modprobe.d/*'\
-	'/var/log/messages'\
+	#'/var/log/messages'\
 )
 
 ########################################################
@@ -1161,7 +1174,7 @@ function check_usage {
 		usage
 	fi
 }
-function main {
+function main_original {
 	# Perform checks before running
 	check_root
 	check_usage $1
@@ -1186,4 +1199,39 @@ function main {
 	# Remove temp dir
 	rm -rf ./SIS-Results
 }
-main $1 2>/dev/null
+
+function main {
+# This version of "main" put contents of genetated html file into a standard output
+# and not created any temporary dirs. Changes mark as ###
+#
+	# Perform checks before running
+	check_root
+	check_usage $1
+	# Start...
+	# Make temporary directory for files
+###	mkdir ./SIS-Results
+	# Create HTML file
+	echo "Please wait... this may take a minute depending on your system configuration"
+###	generate_html $1>./SIS-Results/$OFILE
+	generate_html
+###	# Tarball ibdiagnet results
+###	SILENCE=$(tar -zcf sysinfo_ibdiagnet_results.tar.gz /var/tmp/ibdiagnet2/&>/dev/null)
+###	mv sysinfo_ibdiagnet_results.tar.gz ./SIS-Results/sysinfo_ibdiagnet_results.tar.gz
+###	if [ $1 == "-v" ]; then
+###		# mstdump file...
+###		mstdump-func>./SIS-Results/mstdump-all-interfaces.log
+###	fi
+###	# Tar the results directory
+###	SILENCE=$(tar -zcf $ZOFILE SIS-Results)
+###	# Create md5sum file
+###	SILENCE=$(md5sum $ZOFILE>$ZOFILE.md5sum)
+###	echo $ZOFILE created
+###	# Remove temp dir
+###	rm -rf ./SIS-Results
+}
+
+
+
+###main $1 2>/dev/null
+main
+
